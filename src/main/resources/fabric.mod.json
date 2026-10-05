@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "container-viewer",
+	"version": "${version}",
+	"name": "Container viewer",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/container-viewer/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.foodeggs7.containerviewer.ContainerViewer"
+		],
+		"client": [
+			"com.foodeggs7.containerviewer.client.ContainerViewerClient"
+		]
+	},
+	"mixins": [
+		"container-viewer.mixins.json",
+		{
+			"config": "container-viewer.client.mixins.json",
+			"environment": "server"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
