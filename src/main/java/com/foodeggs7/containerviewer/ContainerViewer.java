@@ -2,6 +2,7 @@ package com.foodeggs7.containerviewer;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -10,6 +11,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
@@ -44,15 +46,14 @@ public class ContainerViewer implements ModInitializer {
 
 			NonNullList<ItemStack> books = bookshelfEntity.getItems();
 
-			if(!books.isEmpty()){
-				System.out.println(books);
-
+			if (!books.isEmpty()){
 				MenuProvider provider = new SimpleMenuProvider(
 						(containerId, playerInventory, menuPlayer) ->
 								new ChiseledBookshelfMenu(
 										containerId,
 										playerInventory,
-										bookshelfEntity
+										bookshelfEntity,
+										blockPos
 								),
 						Component.literal("Chiseled bookshelf")
 				);
@@ -64,6 +65,18 @@ public class ContainerViewer implements ModInitializer {
 
 
 			return InteractionResult.PASS;
+		});
+
+		PlayerBlockBreakEvents.AFTER.register((level, player, blockPos, blockState, blockEntity) -> {
+			if (!blockState.is(Blocks.CHISELED_BOOKSHELF)) {
+				return;
+			}
+
+			for (Player serverPlayer : level.players()) {
+				if (serverPlayer.containerMenu instanceof ChiseledBookshelfMenu menu && menu.getBookShelfPos().equals(blockPos)) {
+					serverPlayer.openMenu(null);
+				}
+			}
 		});
 	}
 
